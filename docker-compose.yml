@@ -1,0 +1,16 @@
+services:
+  clientvault:
+    build:
+      context: ./clientvault # The path in the machine that have the files, in this case root
+      dockerfile: Dockerfile # The name of the Dockerfile definition
+    container_name: clientvault
+    volumes:
+      - ./clientvault:/app
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file:
+      - .env
+
+      
+
+ 
