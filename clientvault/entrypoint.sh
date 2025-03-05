@@ -9,6 +9,3 @@ fi
 
 echo "Starting server"
 pipenv run start
-
-
-

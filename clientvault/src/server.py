@@ -1,23 +1,12 @@
-from sched import scheduler
+#from sched import scheduler
+#from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-# from .routes import feedback, managers, feedbackarea_manager
+from .routes import test
 from fastapi.middleware.cors import CORSMiddleware
 
-@asynccontextmanager
-async def lifespan(app:FastAPI):
-    print("starting scheduler")
-    scheduler.start()
-    yield
+app = FastAPI() #lifespan=lifespan
 
-
-app = FastAPI(lifespan=lifespan)
-
-
-
-# app.include_router(feedback.router)
-# app.include_router(managers.router)
-# app.include_router(feedbackarea_manager.router)
+app.include_router(test.router)
 
 app.add_middleware(
     CORSMiddleware,

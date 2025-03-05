@@ -7,6 +7,8 @@ name = "pypi"
 fastapi = "*"
 uvicorn = "*"
 apscheduler = "*"
+pymysql = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 
