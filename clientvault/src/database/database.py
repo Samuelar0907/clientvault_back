@@ -4,11 +4,11 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # Obtener las variables de entorno
-DB = os.getenv('MYSQL_DATABASE', 'test')  
-DB_PORT = os.getenv('MYSQL_PORT', '3306')  
-DB_USER = os.getenv('MYSQL_USER', 'root')  
-DB_PASSWORD = os.getenv('MYSQL_PASSWORD', 'tu_contraseña')  
-DB_HOST = os.getenv('MYSQL_HOST', 'localhost')  
+DB = os.getenv('MYSQL_DATABASE')  
+DB_PORT = os.getenv('MYSQL_PORT')  
+DB_USER = os.getenv('MYSQL_USER')  
+DB_PASSWORD = os.getenv('MYSQL_PASSWORD')  
+DB_HOST = os.getenv('MYSQL_HOST')  
 
 # URL de conexión a la base de datos MySQL
 URL_DATABASE = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB}"

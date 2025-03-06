@@ -1,8 +1,8 @@
 services:
   clientvault:
     build:
-      context: ./clientvault # The path in the machine that have the files, in this case root
-      dockerfile: Dockerfile # The name of the Dockerfile definition
+      context: ./clientvault
+      dockerfile: Dockerfile
     container_name: clientvault
     volumes:
       - ./clientvault:/app
@@ -10,7 +10,4 @@ services:
       - "${APP_PORT}:${APP_PORT}"
     env_file:
       - .env
-
-      
-
- 
+    network_mode: host  # ¡Importante!

@@ -8,9 +8,9 @@ router = APIRouter(prefix="/test", tags=["prueba"])
 @router.post("/test/")
 def create_test(name: str, age: int, db: Session = Depends(get_db)):
     db_test = Test(name=name, age=age)
-    db.add(db_test)  # Agregar el nuevo registro a la sesión
-    db.commit()  # Confirmar la transacción
-    db.refresh(db_test)  # Recargar el objeto con los datos del DB
+    db.add(db_test)  
+    db.commit() 
+    db.refresh(db_test)
     return db_test
 
 # Endpoint para obtener todos los registros de la tabla test
