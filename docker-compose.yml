@@ -1,5 +1,6 @@
 services:
   clientvault:
+    network_mode: host
     build:
       context: ./clientvault
       dockerfile: Dockerfile
@@ -10,4 +11,3 @@ services:
       - "${APP_PORT}:${APP_PORT}"
     env_file:
       - .env
-    network_mode: host  # ¡Importante!

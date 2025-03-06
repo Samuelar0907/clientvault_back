@@ -1,3 +1,4 @@
+
 from sqlalchemy import Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -15,10 +16,12 @@ TABLE_SECTOR= os.getenv('TABLE_SECTOR')
 TABLE_SUCURSAL= os.getenv('TABLE_SUCURSAL')
 TABLE_TELEFONOS= os.getenv('TABLE_TELEFONOS')
 
+
 class Region(Base):
     __tablename__ = 'region'
     id_region = Column(Integer, primary_key=True, autoincrement=True)
     n_region = Column(String(100), nullable=False)
+
 
 class Comuna(Base): 
     __tablename__ = 'comuna'
