@@ -1,31 +1,92 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from src.database.database import Base
-from src.database.models import Test
-from ..database.crud import ClientService
+from datetime import date
 
-a = ClientService ()
+from ..models.client import Client
+from fastapi import APIRouter
+from ..database.crud import ClientService
+from ..controllers.client_handler import Handlerclient
+from ..models.fono import Telefono
+from ..models.direccion import Direcciones
+
+Crud = ClientService ()
+handler = Handlerclient ()
 router = APIRouter(prefix="/test", tags=["prueba"])
 
-@router.post("/test/")
+@router.post("/AddClient")
+def create_test(id_paciente : str,
+                 pnombre :str,
+                 snombre:str,
+                 appaterno:str,
+                 apmaterno:str,
+                 pais_id :int,
+                 identificacion_id : int,
+                 num_identificacion :str,
 
-def create_test(name: str, age: int):
-    a.add_a (name, age)
+                 f_reg_alma :date,
+                 f_nac : date,
+                 genero :str,
+                 prevision_id :int,
+                 ocupacion_id :int,
+                 celular : str,
+                 
+                 direccion: str,
+                 descripcion : str,
+                 comuna_id : int,
+                 sucursal_id :int,
+                                  
+                 academico_id :int,
+                 mail_princ : str,
+                 mail_sec :str,
+                 ult_visita :date,
+                 tel_fijo : str= None,
+                 familiar : str=None
 
-    return "Agregado correctamente "
+                 ):
+    
+    try:
+        paciente = Client(
+            id_paciente,
+            pnombre,
+            snombre,
+            appaterno,
+            apmaterno,
+            pais_id,
+            num_identificacion,
+            identificacion_id,
+            academico_id,
+            f_reg_alma,
+            f_nac,
+            genero,
+            prevision_id,
+            ocupacion_id,
+            celular,
+            tel_fijo,
+            familiar,
+            direccion,
+            descripcion,
+            comuna_id,
+            sucursal_id,
+            mail_princ,
+            mail_sec,
+            ult_visita
+        
+            
+        )
+        direccion_obj = Direcciones(direccion=direccion, descripcion=descripcion, comuna_id=comuna_id)
+        telefono_obj = Telefono(celular=celular, tel_fijo=tel_fijo, familiar=familiar)
+
+    
+        handler.add_handler_client(paciente,direccion_obj,telefono_obj)
+        return "Client added successfully"
+    except Exception as e :
+        return f"Ocurrió un error inesperado: {str(e)}"
     
 
-
-# Endpoint para obtener todos los registros de la tabla test
-@router.get("/test/")
-def get_tests(db: Session = Depends(Base)):
-    tests = db.query(Test).all()  # Consultar todos los registros
-    return tests
-
-# Endpoint para obtener un registro por su ID
-@router.get("/test/{test_id}")
-def get_test(test_id: int, db: Session = Depends(Base)):
-    db_test = db.query(Test).filter(Test.id == test_id).first()  # Consultar por ID
-    if db_test is None:
-        return {"message": "Registro no encontrado"}
-    return db_test
+    
+    
+@router.get ("/get")
+def dasdaa ():
+    try:
+        response = handler.handler_get_comuna ()
+        return response
+    except Exception as e :
+      return f"Ocurrió un error inesperado: {str(e)}"

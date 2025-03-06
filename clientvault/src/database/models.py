@@ -1,115 +1,161 @@
-
 from sqlalchemy import Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from .database import Base
 import os
 
-TABLE_COMUNA= os.getenv('TABLE_COMUNA')
-TABLE_DIRECCION= os.getenv('TABLE_DIRECCION')
-TABLE_IDENTIFICACION= os.getenv('TABLE_IDENTIFICACION')
-TABLE_OCUPACION= os.getenv('TABLE_OCUPACION')
-TABLE_PACIENTE= os.getenv('TABLE_PACIENTE')
-TABLE_PAIS= os.getenv('TABLE_PAIS')
-TABLE_PREVISION= os.getenv('TABLE_PREVISION')
-TABLE_REGION= os.getenv('TABLE_REGION')
-TABLE_SECTOR= os.getenv('TABLE_SECTOR')
-TABLE_SUCURSAL= os.getenv('TABLE_SUCURSAL')
-TABLE_TELEFONOS= os.getenv('TABLE_TELEFONOS')
+TABLE_COMUNA = os.getenv("TABLE_COMUNA")
+TABLE_DIRECCION = os.getenv("TABLE_DIRECCION")
+TABLE_IDENTIFICACION = os.getenv("TABLE_IDENTIFICACION")
+TABLE_OCUPACION = os.getenv("TABLE_OCUPACION")
+TABLE_PACIENTE = os.getenv("TABLE_PACIENTE")
+TABLE_PAIS = os.getenv("TABLE_PAIS")
+TABLE_PREVISION = os.getenv("TABLE_PREVISION")
+TABLE_REGION = os.getenv("TABLE_REGION")
+TABLE_SECTOR = os.getenv("TABLE_SECTOR")
+TABLE_SUCURSAL = os.getenv("TABLE_SUCURSAL")
+TABLE_TELEFONOS = os.getenv("TABLE_TELEFONOS")
+TABLE_NVACADEMICO = os.getenv("TABLE_NVACADEMICO")
 
 
 class Region(Base):
-    __tablename__ = 'region'
-    id_region = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_REGION
+
+    id_region = Column(Integer, primary_key=True)
     n_region = Column(String(100), nullable=False)
+    comunas = relationship("Comuna", back_populates="region")
 
 
-class Comuna(Base): 
-    __tablename__ = 'comuna'
-    id_comuna = Column(Integer, primary_key=True, autoincrement=True)
+class Comuna(Base):
+    __tablename__ = TABLE_COMUNA
+
+    id_comuna = Column(Integer, primary_key=True)
     n_comuna = Column(String(100), nullable=False)
-    region_id = Column(Integer, ForeignKey('region.id_region'), nullable=False)
-    region = relationship("Region")
+    region_id = Column(Integer, ForeignKey(f"{TABLE_REGION}.id_region"), nullable=False)
+    region = relationship("Region", back_populates="comunas")
+    direcciones = relationship("Direccion", back_populates="comuna")
+
 
 class Direccion(Base):
-    __tablename__ = 'direccion'
-    id_direccion = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_DIRECCION
+
+    id_direccion = Column(Integer, primary_key=True)
     direccion = Column(String(200), nullable=False)
     descripcion = Column(String(1000))
-    comuna_id = Column(Integer, ForeignKey('comuna.id_comuna'), nullable=False)
-    comuna = relationship("Comuna")
+    comuna_id = Column(Integer, ForeignKey(f"{TABLE_COMUNA}.id_comuna"), nullable=False)
+    comuna = relationship("Comuna", back_populates="direcciones")
+    pacientes = relationship("Paciente", back_populates="direccion")
+
 
 class Identificacion(Base):
-    __tablename__ = 'identificacion'
-    id_identificacion = Column(Integer, primary_key=True, autoincrement=True)
-    identificacion = Column(String(30),)
+    __tablename__ = TABLE_IDENTIFICACION
+
+    id_identificacion = Column(Integer, primary_key=True)
+    n_documeto = Column(String(30))
+    pacientes = relationship("Paciente", back_populates="identificacion")
+
+class Academico(Base):
+    __tablename__ = TABLE_NVACADEMICO
+
+    id_academiconv = Column(Integer, primary_key=True)
+    n_academiconv = Column(String(100), nullable=False)
+    pacientes = relationship("Paciente", back_populates="nivel_academico")
+
+
 
 class Sector(Base):
-    __tablename__ = 'sector'
-    id_sector = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_SECTOR
+
+    id_sector = Column(Integer, primary_key=True)
     tipo_sector = Column(String(100), nullable=False)
+    ocupaciones = relationship("Ocupacion", back_populates="sector")
+
 
 class Ocupacion(Base):
-    __tablename__ = 'ocupacion'
-    id_ocupacion = Column(Integer, primary_key=True, autoincrement=True)
-    sector_id = Column(Integer, ForeignKey('sector.id_sector'), nullable=False)
+    __tablename__ = TABLE_OCUPACION
+
+    id_ocupacion = Column(Integer, primary_key=True)
+    sector_id = Column(Integer, ForeignKey(f"{TABLE_SECTOR}.id_sector"), nullable=False)
     tipo_ocupacion = Column(String(75), nullable=False)
-    sector = relationship("Sector")
+    sector = relationship("Sector", back_populates="ocupaciones")
+    pacientes = relationship("Paciente", back_populates="ocupacion")
+
 
 class Pais(Base):
-    __tablename__ = 'pais'
-    id_pais = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_PAIS
+
+    id_pais = Column(Integer, primary_key=True)
     iso = Column(String(2))
     isonum = Column(Integer)
     nombre = Column(String(80))
+    pacientes = relationship("Paciente", back_populates="pais")
+
 
 class Prevision(Base):
-    __tablename__ = 'prevision'
-    id_prevision = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_PREVISION
+
+    id_prevision = Column(Integer, primary_key=True)
     tipo_prev = Column(String(100), nullable=False)
+    pacientes = relationship("Paciente", back_populates="prevision")
+
 
 class Sucursal(Base):
-    __tablename__ = 'sucursal'
-    id_sucursal = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_SUCURSAL
+
+    id_sucursal = Column(Integer, primary_key=True)
     sucursal = Column(String(100), nullable=False)
+    pacientes = relationship("Paciente", back_populates="sucursal")
+
 
 class Telefonos(Base):
-    __tablename__ = 'telefonos'
-    id_telefonos = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = TABLE_TELEFONOS
+
+    id_telefonos = Column(Integer, primary_key=True)
     celular = Column(String(15))
     tel_fijo = Column(String(15))
     familiar = Column(String(15))
+    pacientes = relationship("Paciente", back_populates="telefono")
 
-class Academico(Base):
-    __tablename__= 'nvacademico'
-    id_academiconv = Column(Integer, primary_key=True, autoincrement=True)
-    n_academiconv = Column(String(100), nullable=False)
+
 
 class Paciente(Base):
-    __tablename__ = 'paciente'
-    id_paciente = Column(String(25), primary_key=True, index=True  )
+    __tablename__ = TABLE_PACIENTE
+
+    id_paciente = Column(String(25), primary_key=True, index=True)
     pnombre = Column(String(50), nullable=False)
     snombre = Column(String(100), nullable=False)
-    ap_paterno = Column(String(100), nullable=False)
+    appaterno = Column(String(100), nullable=False)
     apmaterno = Column(String(100))
-    pais_id = Column(Integer, ForeignKey('pais.id_pais'), nullable=False)
-    num_documento= Column(String(20))
-    identificacion_id = Column(Integer, ForeignKey('identificacion.id_identificacion'), unique=True, nullable=False)
+    pais_id = Column(Integer, ForeignKey(f"{TABLE_PAIS}.id_pais"), nullable=False)
+    
+    identificacion_id = Column(
+        Integer, ForeignKey(f"{TABLE_IDENTIFICACION}.id_identificacion"), unique=True, nullable=False
+    )
+    num_identificacion = Column(String(20))
+   
     f_reg_alma = Column(Date, nullable=False)
     f_nac = Column(Date, nullable=False)
     genero = Column(String(10), nullable=False)
-    prevision_id = Column(Integer, ForeignKey('prevision.id_prevision'), nullable=False)
-    ocupacion_id = Column(Integer, ForeignKey('ocupacion.id_ocupacion'), nullable=False)
-    telefono_id = Column(Integer, ForeignKey('telefonos.id_telefonos'), unique=True, nullable=False)
-    direccion_id = Column(Integer, ForeignKey('direccion.id_direccion'), unique=True, nullable=False)
-    sucursal_id = Column(Integer, ForeignKey('sucursal.id_sucursal'), nullable=False)
+    prevision_id = Column(Integer, ForeignKey(f"{TABLE_PREVISION}.id_prevision"), nullable=False)
+    ocupacion_id = Column(Integer, ForeignKey(f"{TABLE_OCUPACION}.id_ocupacion"), nullable=False)
+    telefono_id = Column(
+        Integer, ForeignKey(f"{TABLE_TELEFONOS}.id_telefonos"), unique=True, nullable=False
+    )
+    direccion_id = Column(
+        Integer, ForeignKey(f"{TABLE_DIRECCION}.id_direccion"), unique=True, nullable=False
+    )
+    sucursal_id = Column(Integer, ForeignKey(f"{TABLE_SUCURSAL}.id_sucursal"), nullable=False)
+    academico_id = Column(
+        Integer, ForeignKey(f"{TABLE_NVACADEMICO}.id_academiconv"), nullable=False
+    )
     mail_princ = Column(String(255), nullable=False)
     mail_sec = Column(String(255))
     ult_visita = Column(Date)
 
-    pais = relationship("Pais")
-    identificacion = relationship("Identificacion")
-    prevision = relationship("Prevision")
-    ocupacion = relationship("Ocupacion")
-    telefono = relationship("Telefonos")
-    direccion = relationship("Direccion")
-    sucursal = relationship("Sucursal")
+    pais = relationship("Pais", back_populates="pacientes")
+    identificacion = relationship("Identificacion", back_populates="pacientes")
+    nivel_academico = relationship("Academico", back_populates="pacientes")
+    prevision = relationship("Prevision", back_populates="pacientes")
+    ocupacion = relationship("Ocupacion", back_populates="pacientes")
+    telefono = relationship("Telefonos", back_populates="pacientes")
+    direccion = relationship("Direccion", back_populates="pacientes")
+    sucursal = relationship("Sucursal", back_populates="pacientes")
