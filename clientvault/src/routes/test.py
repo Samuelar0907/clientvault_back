@@ -8,11 +8,13 @@ a = ClientService ()
 router = APIRouter(prefix="/test", tags=["prueba"])
 
 @router.post("/test/")
+
 def create_test(name: str, age: int):
     a.add_a (name, age)
 
     return "Agregado correctamente "
     
+
 
 # Endpoint para obtener todos los registros de la tabla test
 @router.get("/test/")
