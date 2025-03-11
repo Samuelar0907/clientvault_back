@@ -4,8 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 
-DB = os.getenv('MYSQL_DATABASE')  
-
+DB = os.getenv('MYSQL_DATABASE_CLIENT_POTENTIAL')  
 DB_PORT = os.getenv('MYSQL_PORT')  
 DB_USER = os.getenv('MYSQL_USER')  
 DB_PASSWORD = os.getenv('MYSQL_PASSWORD')  

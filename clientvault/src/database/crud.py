@@ -1,4 +1,5 @@
 from .database import SessionLocal
+from sqlalchemy.orm import  joinedload
 from ..models.client import Client
 from ..database.models import (
 Ocupacion, Paciente,
@@ -175,3 +176,28 @@ class ClientService:
             raise e  
         finally:
             self.db.close()
+
+    def get_clients (self):
+        try:
+            client_search = (
+                self.db.query(Paciente).options(
+                    joinedload(Paciente.pais),
+                    joinedload(Paciente.identificacion),
+                    joinedload(Paciente.nivel_academico),
+                    joinedload(Paciente.prevision),
+                    joinedload(Paciente.ocupacion),
+                    joinedload(Paciente.telefono),
+                    joinedload(Paciente.direccion),
+                    joinedload(Paciente.sucursal),
+                ).all()
+            )
+
+            return client_search
+        except Exception as e:
+            return f"error{str(e)}"
+        
+
+
+
+
+    

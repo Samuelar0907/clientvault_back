@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from .routes import client
 from fastapi.middleware.cors import CORSMiddleware
+
+from .routes import client_potential
 
 app = FastAPI() #lifespan=lifespan
 
-app.include_router(client.router)
+app.include_router(client_potential.router)
 
 
 app.add_middleware(

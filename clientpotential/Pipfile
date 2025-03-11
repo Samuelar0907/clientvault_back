@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+apscheduler = "*"
+pymysql = "*"
+sqlalchemy = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
+
+
+[scripts]
+start = "uvicorn src.server:app --reload --host 0.0.0.0 --port ${CLIENT_POTENTIAL_PORT}"

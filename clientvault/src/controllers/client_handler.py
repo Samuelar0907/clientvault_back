@@ -72,5 +72,31 @@ class Handlerclient():
             return response
         except Exception as e :
             print("Error get iso: ", e)
+
+    def handler_get_client (self):
+        try:
+            search = self.crud.get_clients ()
+            patient_list = []
+            for patient in search :
+                patient_data=patient.__dict__.copy()
+                relations = {
+                    'prevision_id' : patient.prevision.tipo_prev if patient.prevision else None,
+                    'identificacion_id' : patient.identificacion.n_documeto if patient.identificacion else None,
+                    'sucursal_id' : patient.sucursal.sucursal if patient.sucursal else None,
+                    'academico_id' : patient.nivel_academico.n_academiconv if patient.nivel_academico else None,
+                    'pais_id' : patient.pais.nombre if patient.pais else None
+                }
+                patient_data.update(relations)
+                remove = [
+                    'prevision',   'identificacion',
+                    'sucursal', 'nivel_academico', 'pais',
+                ]
+                for key in remove:
+                    patient_data.pop(key, None)
+                patient_list.append(patient_data)
+                
+            return patient_list
+        except Exception as e:
+            print("Error when i try to get all client: ", str(e))
             
 

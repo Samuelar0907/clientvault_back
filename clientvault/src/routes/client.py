@@ -1,5 +1,7 @@
 from datetime import date
 
+from ..database.database import very
+
 from ..models.client import Client
 from fastapi import APIRouter
 from ..database.crud import ClientService
@@ -9,7 +11,11 @@ from ..models.direccion import Direcciones
 
 Crud = ClientService()
 handler = Handlerclient()
-router = APIRouter(prefix="/test", tags=["prueba"])
+router = APIRouter(prefix="/client", tags=["client"])
+
+@router.get("/")
+def test():
+    return {"response": "World in testing for client"}
 
 @router.post("/AddClient")
 def create_test(id_paciente: str,
@@ -101,6 +107,24 @@ def get_region(id_sector: int):
 def get_iso(id_pais: int):
     try:
         response = handler.handler_get_iso(id_pais)
+        return response
+    except Exception as e:
+      return f"Ocurrió un error inesperado: {str(e)}"
+    
+@router.get("/getClient")
+def get_patient():
+    try:
+        response = handler.handler_get_client()
+        return response
+    except Exception as e:
+      return f"Ocurrió un error inesperado: {str(e)}"
+    
+# GET PRA VERIFICAR CONECCION A DB
+
+@router.get("/testDB")
+def get_very_db():
+    try:
+        response = very ()
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"
