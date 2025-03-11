@@ -1,7 +1,3 @@
-
-
-
-
 from ..database.crud import ClientService
 from ..models.client import Client
 from ..models.fono import Telefono
@@ -9,27 +5,72 @@ from ..models.direccion import Direcciones
 
 
 
-class Handlerclient ():
+class Handlerclient():
     
-    crud = ClientService ()    
-    def add_handler_client (self,client : Client, direccion: Direcciones, fono: Telefono )->str:
+    crud = ClientService()
+    def add_handler_client(self,client : Client, direccion: Direcciones, fono: Telefono )->str:
         try:
-            direccion_id_data = self.crud.add_direccion(direccion)
-            telefono_id_data = self.crud.add_tel(fono)
+            if self.crud.get_num_identificacion(client.num_identificacion):
+                print("ya exsiste el documento\n")
+                return "el docuemnto ya esta registrado"
+            else:
+                direccion_id_data = self.crud.add_direccion(direccion)
+                telefono_id_data = self.crud.add_tel(fono)
+                
+
+                client.direccion_id = direccion_id_data
+                client.telefono_id = telefono_id_data
             
-     
-            client.direccion_id = direccion_id_data
-            client.telefono_id = telefono_id_data
-           
-            response = self.crud.add_client (client)
-            return response
+                response = self.crud.add_client(client)
+                return response
         except Exception as e :
             print("Error adding client: ", e)
 
-    def handler_get_comuna (self):
+    def handler_get_selects(self):
         try:
-            response  =self.crud.get_comuna ()
+            data_pais = self.crud.get_pais()
+            data_documento = self.crud.get_tipo_documento()
+            data_prevision = self.crud.get_prevision()
+            data_sector = self.crud.get_sector()
+            data_region = self.crud.get_region()
+            data_sucursal = self.crud.get_sucursal()
+            data_nivel_academico = self.crud.get_nivel_academico()
+
+            select_options = {
+                "pais": [{"value": item.id_pais, "label": item.nombre} for item in data_pais],
+                "identificacion": [{"value": item.id_identificacion, "label": item.n_documeto} for item in data_documento],
+                "prevision": [{"value": item.id_prevision, "label": item.tipo_prev} for item in data_prevision],
+                "sector": [{"value": item.id_sector, "label": item.tipo_sector} for item in data_sector],
+                "region": [{"value": item.id_region, "label": item.n_region} for item in data_region],
+                "sucursal": [{"value": item.id_sucursal, "label": item.sucursal} for item in data_sucursal],
+                "academico": [{"value": item.id_academiconv, "label": item.n_academiconv} for item in data_nivel_academico]
+            }
+
+            return select_options
+        except Exception as e:
+            print("Error al obtener los selects: ", e)
+            return {"error": "Hubo un problema al obtener los selects"}
+
+
+    def handler_get_comuna(self, id_region):
+        try:
+            response  =self.crud.get_comuna(id_region)
             return response
         except Exception as e :
-            print("Error adding client: ", e)
+            print("Error get comuna: ", e)
+
+    def handler_get_ocupacion(self, id_sector):
+        try:
+            response  =self.crud.get_ocupacion(id_sector)
+            return response
+        except Exception as e :
+            print("Error get ocupacion: ", e)
+    
+    def handler_get_iso(self, id_pais):
+        try:
+            response  =self.crud.get_pais_iso(id_pais)
+            return response
+        except Exception as e :
+            print("Error get iso: ", e)
+            
 

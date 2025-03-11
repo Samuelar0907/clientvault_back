@@ -20,7 +20,7 @@ TABLE_NVACADEMICO = os.getenv("TABLE_NVACADEMICO")
 class Region(Base):
     __tablename__ = TABLE_REGION
 
-    id_region = Column(Integer, primary_key=True)
+    id_region = Column(Integer, primary_key=True, autoincrement=True)
     n_region = Column(String(100), nullable=False)
     comunas = relationship("Comuna", back_populates="region")
 
@@ -28,7 +28,7 @@ class Region(Base):
 class Comuna(Base):
     __tablename__ = TABLE_COMUNA
 
-    id_comuna = Column(Integer, primary_key=True)
+    id_comuna = Column(Integer, primary_key=True, autoincrement=True)
     n_comuna = Column(String(100), nullable=False)
     region_id = Column(Integer, ForeignKey(f"{TABLE_REGION}.id_region"), nullable=False)
     region = relationship("Region", back_populates="comunas")
@@ -38,9 +38,9 @@ class Comuna(Base):
 class Direccion(Base):
     __tablename__ = TABLE_DIRECCION
 
-    id_direccion = Column(Integer, primary_key=True)
+    id_direccion = Column(Integer, primary_key=True, autoincrement=True)
     direccion = Column(String(200), nullable=False)
-    descripcion = Column(String(1000))
+    descripcion = Column(String(1000), nullable= True)
     comuna_id = Column(Integer, ForeignKey(f"{TABLE_COMUNA}.id_comuna"), nullable=False)
     comuna = relationship("Comuna", back_populates="direcciones")
     pacientes = relationship("Paciente", back_populates="direccion")
@@ -49,14 +49,14 @@ class Direccion(Base):
 class Identificacion(Base):
     __tablename__ = TABLE_IDENTIFICACION
 
-    id_identificacion = Column(Integer, primary_key=True)
+    id_identificacion = Column(Integer, primary_key=True, autoincrement=True)
     n_documeto = Column(String(30))
     pacientes = relationship("Paciente", back_populates="identificacion")
 
 class Academico(Base):
     __tablename__ = TABLE_NVACADEMICO
 
-    id_academiconv = Column(Integer, primary_key=True)
+    id_academiconv = Column(Integer, primary_key=True, autoincrement=True)
     n_academiconv = Column(String(100), nullable=False)
     pacientes = relationship("Paciente", back_populates="nivel_academico")
 
@@ -65,7 +65,7 @@ class Academico(Base):
 class Sector(Base):
     __tablename__ = TABLE_SECTOR
 
-    id_sector = Column(Integer, primary_key=True)
+    id_sector = Column(Integer, primary_key=True, autoincrement=True)
     tipo_sector = Column(String(100), nullable=False)
     ocupaciones = relationship("Ocupacion", back_populates="sector")
 
@@ -73,7 +73,7 @@ class Sector(Base):
 class Ocupacion(Base):
     __tablename__ = TABLE_OCUPACION
 
-    id_ocupacion = Column(Integer, primary_key=True)
+    id_ocupacion = Column(Integer, primary_key=True, autoincrement=True)
     sector_id = Column(Integer, ForeignKey(f"{TABLE_SECTOR}.id_sector"), nullable=False)
     tipo_ocupacion = Column(String(75), nullable=False)
     sector = relationship("Sector", back_populates="ocupaciones")
@@ -83,7 +83,7 @@ class Ocupacion(Base):
 class Pais(Base):
     __tablename__ = TABLE_PAIS
 
-    id_pais = Column(Integer, primary_key=True)
+    id_pais = Column(Integer, primary_key=True, autoincrement=True)
     iso = Column(String(2))
     isonum = Column(Integer)
     nombre = Column(String(80))
@@ -93,7 +93,7 @@ class Pais(Base):
 class Prevision(Base):
     __tablename__ = TABLE_PREVISION
 
-    id_prevision = Column(Integer, primary_key=True)
+    id_prevision = Column(Integer, primary_key=True, autoincrement=True)
     tipo_prev = Column(String(100), nullable=False)
     pacientes = relationship("Paciente", back_populates="prevision")
 
@@ -101,7 +101,7 @@ class Prevision(Base):
 class Sucursal(Base):
     __tablename__ = TABLE_SUCURSAL
 
-    id_sucursal = Column(Integer, primary_key=True)
+    id_sucursal = Column(Integer, primary_key=True, autoincrement=True)
     sucursal = Column(String(100), nullable=False)
     pacientes = relationship("Paciente", back_populates="sucursal")
 
@@ -109,10 +109,10 @@ class Sucursal(Base):
 class Telefonos(Base):
     __tablename__ = TABLE_TELEFONOS
 
-    id_telefonos = Column(Integer, primary_key=True)
-    celular = Column(String(15))
-    tel_fijo = Column(String(15))
-    familiar = Column(String(15))
+    id_telefonos = Column(Integer, primary_key=True, autoincrement=True)
+    celular = Column(String(15), nullable=False)
+    tel_fijo = Column(String(15), nullable=True)
+    familiar = Column(String(15), nullable=True)
     pacientes = relationship("Paciente", back_populates="telefono")
 
 
@@ -122,13 +122,13 @@ class Paciente(Base):
 
     id_paciente = Column(String(25), primary_key=True, index=True)
     pnombre = Column(String(50), nullable=False)
-    snombre = Column(String(100), nullable=False)
+    snombre = Column(String(100), nullable=True)
     appaterno = Column(String(100), nullable=False)
-    apmaterno = Column(String(100))
+    apmaterno = Column(String(100), nullable= True)
     pais_id = Column(Integer, ForeignKey(f"{TABLE_PAIS}.id_pais"), nullable=False)
     
     identificacion_id = Column(
-        Integer, ForeignKey(f"{TABLE_IDENTIFICACION}.id_identificacion"), unique=True, nullable=False
+        Integer, ForeignKey(f"{TABLE_IDENTIFICACION}.id_identificacion"), nullable=False
     )
     num_identificacion = Column(String(20))
    
@@ -138,18 +138,18 @@ class Paciente(Base):
     prevision_id = Column(Integer, ForeignKey(f"{TABLE_PREVISION}.id_prevision"), nullable=False)
     ocupacion_id = Column(Integer, ForeignKey(f"{TABLE_OCUPACION}.id_ocupacion"), nullable=False)
     telefono_id = Column(
-        Integer, ForeignKey(f"{TABLE_TELEFONOS}.id_telefonos"), unique=True, nullable=False
+        Integer, ForeignKey(f"{TABLE_TELEFONOS}.id_telefonos"), nullable=False
     )
     direccion_id = Column(
-        Integer, ForeignKey(f"{TABLE_DIRECCION}.id_direccion"), unique=True, nullable=False
+        Integer, ForeignKey(f"{TABLE_DIRECCION}.id_direccion"), nullable=False
     )
     sucursal_id = Column(Integer, ForeignKey(f"{TABLE_SUCURSAL}.id_sucursal"), nullable=False)
     academico_id = Column(
         Integer, ForeignKey(f"{TABLE_NVACADEMICO}.id_academiconv"), nullable=False
     )
     mail_princ = Column(String(255), nullable=False)
-    mail_sec = Column(String(255))
-    ult_visita = Column(Date)
+    mail_sec = Column(String(255), nullable=True)
+    ult_visita = Column(Date, nullable=False)
 
     pais = relationship("Pais", back_populates="pacientes")
     identificacion = relationship("Identificacion", back_populates="pacientes")
