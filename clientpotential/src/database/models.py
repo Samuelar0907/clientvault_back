@@ -11,8 +11,9 @@ class ClienteStatus(Base):
 
     id_status = Column(Integer, primary_key=True, autoincrement=True)
     tipo_cliente = Column(String(50))
-  
-    clienteStatus = relationship("PotentialClient", back_populates="ClienteStatus")
+
+    # Relación con PotentialClient
+    potential_clients = relationship("PotentialClient", back_populates="cliente_status")
 
 class PotentialClient(Base):
     __tablename__ = TABLE_POTENTIAL_CLIENT
@@ -21,14 +22,14 @@ class PotentialClient(Base):
     pnombre = Column(String(50), nullable=False)
     snombre = Column(String(50), nullable=True)
     appaterno = Column(String(50), nullable=False)
-    apmaterno = Column(String(50), nullable= True)
-    email = Column(String(100), nullable=False)
-    numero_telefono = Column(String(20),  nullable=False)
+    apmaterno = Column(String(50), nullable=True)
+    email = Column(String(100), index=False)
+    numero_telefono = Column(String(20), index=False)
     razon_contacto = Column(Text())
     cliente_status_id = Column(
-        Integer, ForeignKey(f"{TABLE_CLIENTSTATUS}.id_direccion"), nullable=False
+        Integer, ForeignKey(f"{TABLE_CLIENTSTATUS}.id_status"), nullable=False
     )
-    fecha_creacion = Column(Date, nullable=False)
+    fecha_creacion = Column(Date, index=False)
 
-    cliente_status = relationship("ClienteStatus", back_populates="PotentialClient")
-   
+    # Relación con ClienteStatus
+    cliente_status = relationship("ClienteStatus", back_populates="potential_clients")

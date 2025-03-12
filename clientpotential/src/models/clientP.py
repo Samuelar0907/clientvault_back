@@ -1,4 +1,4 @@
-class ClientPotencial :
+class clientPotencial :
 
     def __init__ (
         self,
@@ -8,7 +8,7 @@ class ClientPotencial :
         numero_telefono,
         razon_contacto,
         cliente_status_id,
-        fecha_creacion,
+        fecha_creacion = None,
         snombre= None,
         apmaterno= None,
         id= None,

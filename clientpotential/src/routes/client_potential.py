@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from ..controllers.client_potential_handler import HandlerClientPotential
 
-from ..models.clientP import ClientPotencial
+from ..models.clientP import clientPotencial
 
 handler = HandlerClientPotential()
 router = APIRouter(prefix="/clientPotential", tags=["clientPotential"])
@@ -23,11 +23,11 @@ def add_clientPotencial(pnombre :str,
         numero_telefono:str,
         razon_contacto:str,
         cliente_status_id:int,
-        fecha_creacion:date,
+     
         snombre: str= None,
         apmaterno: str= None):
     try:
-        paciente = ClientPotencial(
+        paciente = clientPotencial(
             
             pnombre=pnombre,
             snombre=snombre,
@@ -36,7 +36,7 @@ def add_clientPotencial(pnombre :str,
             numero_telefono=numero_telefono,
             razon_contacto=razon_contacto,
             cliente_status_id=cliente_status_id,
-            fecha_creacion=fecha_creacion,
+       
             apmaterno=apmaterno
         )
         response = handler.add_handler_client(paciente)
@@ -44,7 +44,15 @@ def add_clientPotencial(pnombre :str,
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"
 
+#get client potential
 
+@router.get("/getclientPotential")
+def get_potentialClient():
+    try:
+        response = handler.get_clientPotential_handler()
+        return response
+    except Exception as e:
+      return f"Ocurrió un error inesperado: {str(e)}"
 
 # GET PRA VERIFICAR CONECCION A DB
 
