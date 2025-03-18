@@ -1,0 +1,24 @@
+services:
+  clientvault:
+    network_mode: host
+    build:
+      context: ./clientvault
+      dockerfile: Dockerfile
+    container_name: ${CLIENT_SERVICE_HOST}
+    volumes:
+      - ./clientvault:/app
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file:
+      - .env
+  clientpotential:
+    build:
+      context: ./clientpotential
+      dockerfile: Dockerfile
+    container_name: ${CLIENT_POTENTIAL_SERVICE_HOST}
+    volumes:
+      - ./clientpotential:/app
+    ports:
+      - "${CLIENT_POTENTIAL_PORT}:${CLIENT_POTENTIAL_PORT}"
+    env_file:
+      - .env
