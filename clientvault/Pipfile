@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
 uvicorn = "*"
 apscheduler = "*"
 pymysql = "*"
 sqlalchemy = "*"
+fastapi = "*"
 
 [dev-packages]
 

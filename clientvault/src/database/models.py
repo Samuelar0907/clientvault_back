@@ -24,6 +24,12 @@ class Region(Base):
     n_region = Column(String(100), nullable=False)
     comunas = relationship("Comuna", back_populates="region")
 
+class User(Base):
+    __tablename__ = "users"
+    id_user = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String, index=True)
+    password = Column(String)
+
 
 class Comuna(Base):
     __tablename__ = TABLE_COMUNA

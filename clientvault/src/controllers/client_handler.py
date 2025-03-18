@@ -100,3 +100,16 @@ class Handlerclient():
             print("Error when i try to get all client: ", str(e))
             
 
+
+from ..database.crud import AuthService
+
+class AuthHandler:
+    crud = AuthService()
+    def login_user(self, email: str, password: str):
+        try:
+            user = self.crud.authenticate_user(email, password)
+            if not user:
+                return {"success": False, "error": "Credenciales inválidas"}
+            return {"success": True, "email": user.email}
+        except Exception as e:
+            return {"success": False, "error": str(e)}

@@ -128,3 +128,19 @@ def get_very_db():
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"
+
+
+
+
+from pydantic import BaseModel
+from src.controllers.client_handler import AuthHandler
+
+handleruser = AuthHandler()
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+@router.post("/login")
+def login(credentials: LoginRequest):
+    return handleruser.login_user(credentials.email, credentials.password)

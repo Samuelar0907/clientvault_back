@@ -7,7 +7,8 @@ Direccion, Pais,
 Sector, Telefonos,
 Comuna, Region,
 Identificacion, Academico,
-Prevision, Sucursal
+Prevision, Sucursal,
+User
 )
 from ..models.direccion import Direcciones
 from ..models.fono import Telefono
@@ -199,5 +200,20 @@ class ClientService:
 
 
 
+class AuthService:
+    def __init__(self):
+        self.db = SessionLocal()
+    
+    def authenticate_user(self, email: str, password: str):
+        try:
+            user = self.db.query(User).filter(
+                User.email == email,
+                User.password == password
+            ).first()
+            return user
+        except Exception as e:
+            raise e
+        finally:
+            self.db.close()
 
     
