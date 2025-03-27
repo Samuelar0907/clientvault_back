@@ -18,7 +18,7 @@ def test():
     return {"response": "World in testing for client"}
 
 @router.post("/AddClient")
-def create_test(id_paciente: str,
+def create_test(
                  pnombre: str,
                  appaterno: str,
                  identificacion_id: int,
@@ -50,7 +50,7 @@ def create_test(id_paciente: str,
     
     try:
         paciente = Client(
-            id_paciente=id_paciente,
+           
             pnombre=pnombre,
             snombre=snombre,
             appaterno=appaterno,
@@ -71,13 +71,84 @@ def create_test(id_paciente: str,
         )
         direccion_obj = Direcciones(direccion=direccion, descripcion=descripcion, comuna_id=comuna_id)
         telefono_obj = Telefono(celular=celular, tel_fijo=tel_fijo, familiar=familiar)
-
-    
         response = handler.add_handler_client(paciente,direccion_obj,telefono_obj)
         return response
     except Exception as e:
         return f"Ocurrió un error inesperado: {str(e)}"
-     
+
+@router.post("/editClient")
+def edit_client_r(
+    id_paciente: int,
+    pnombre: str,
+    appaterno: str,
+    identificacion_id: int,
+    num_identificacion: str,
+    pais_id: int,
+    f_reg_alma: date,
+    f_nac: date,
+    genero: str,
+    prevision_id: int,
+    ocupacion_id: int,
+    celular: str,
+    comuna_id: int,
+    direccion: str,
+    descripcion: str,
+    sucursal_id: int,
+    academico_id: int,
+    mail_princ: str,
+    ult_visita: date,
+    snombre: str = None,
+    apmaterno: str = None,
+    mail_sec: str = None,
+    tel_fijo: str = None,
+    familiar: str = None
+):
+    try:
+        # Crear objeto Client
+        paciente = Client(
+            id_paciente=id_paciente,
+            pnombre=pnombre,
+            snombre=snombre,
+            appaterno=appaterno,
+            apmaterno=apmaterno,
+            pais_id=pais_id,
+            identificacion_id=identificacion_id,
+            num_identificacion=num_identificacion,
+            f_reg_alma=f_reg_alma,
+            f_nac=f_nac,
+            genero=genero,
+            prevision_id=prevision_id,
+            ocupacion_id=ocupacion_id,
+            sucursal_id=sucursal_id,
+            academico_id=academico_id,
+            mail_princ=mail_princ,
+            mail_sec=mail_sec,
+            ult_visita=ult_visita
+        )
+        
+        direccion_obj = Direcciones(
+            direccion=direccion,
+            descripcion=descripcion,
+            comuna_id=comuna_id
+        )
+        
+        telefono_obj = Telefono(
+            celular=celular,
+            tel_fijo=tel_fijo,
+            familiar=familiar
+        )
+        
+        response = handler.edit_handler_client(
+            client=paciente,
+            direccion=direccion_obj,
+            fono=telefono_obj,
+            id_paciente=id_paciente
+        )
+        
+        return response
+    
+    except Exception as e:
+        return {"status": "error", "message": f"Ocurrió un error inesperado: {str(e)}"}
 ### gets ###
 @router.get("/get/selects")
 def json_selects():
@@ -99,14 +170,6 @@ def get_region(id_region: int):
 def get_region(id_sector: int):
     try:
         response = handler.handler_get_ocupacion(id_sector)
-        return response
-    except Exception as e:
-      return f"Ocurrió un error inesperado: {str(e)}"
-    
-@router.get("/get/pais/iso/{id_pais}")
-def get_iso(id_pais: int):
-    try:
-        response = handler.handler_get_iso(id_pais)
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"

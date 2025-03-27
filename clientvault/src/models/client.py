@@ -2,7 +2,7 @@ class Client :
 
     def __init__ (
         self,
-        id_paciente,
+        
         pnombre,
         appaterno,
         pais_id,
@@ -22,6 +22,8 @@ class Client :
         mail_sec= None,
         direccion_id= None,
         telefono_id= None,
+        uid = None,
+        id_paciente = None,
     )-> None:
 
             self.id_paciente=id_paciente
@@ -44,6 +46,8 @@ class Client :
             self.mail_princ=mail_princ
             self.mail_sec=mail_sec
             self.ult_visita=ult_visita
+            self.uid=uid
+
 
 
 

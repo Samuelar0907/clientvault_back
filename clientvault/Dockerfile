@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
+    postgresql-client \
     default-mysql-client
 
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it.sh

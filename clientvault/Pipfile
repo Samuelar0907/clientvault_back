@@ -9,6 +9,8 @@ apscheduler = "*"
 pymysql = "*"
 sqlalchemy = "*"
 fastapi = "*"
+psycopg2-binary = "*"
+alembic = "*"
 
 [dev-packages]
 
@@ -17,3 +19,5 @@ python_version = "3.12"
 
 [scripts]
 start = "uvicorn src.server:app --reload --host 0.0.0.0 --port ${APP_PORT}"
+make-migrations = "alembic revision --autogenerate -m 'migrations'"
+migrate = "alembic upgrade head"

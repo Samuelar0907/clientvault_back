@@ -12,12 +12,16 @@ class Handlerclient():
         try:
             if self.crud.get_num_identificacion(client.num_identificacion):
                 print("ya exsiste el documento\n")
-                return "el docuemnto ya esta registrado"
+                return "el paciente ya esta registrado, verifique que el rut, dni o pasaporte sea correcto"
             else:
                 direccion_id_data = self.crud.add_direccion(direccion)
                 telefono_id_data = self.crud.add_tel(fono)
                 
-
+                if client.identificacion_id == 2 or client.identificacion_id == 3: 
+                    isonum = self.crud.get_pais_iso(client.pais_id)
+                    id_pacient_iso = client.id_paciente+ str(isonum)
+                    client.id_paciente = id_pacient_iso
+                
                 client.direccion_id = direccion_id_data
                 client.telefono_id = telefono_id_data
             
@@ -25,6 +29,27 @@ class Handlerclient():
                 return response
         except Exception as e :
             print("Error adding client: ", e)
+    def edit_handler_client(self, client: Client, direccion: Direcciones, fono: Telefono, id_paciente: int) -> str:
+        try:
+            # Editar dirección usando el ID del paciente
+            direccion_id_data = self.crud.edit_direccion(direccion, id_paciente)
+            
+            # Editar teléfono usando el ID del paciente
+            telefono_id_data = self.crud.edit_fono(fono, id_paciente)
+            
+            # Actualizar las referencias en el cliente
+            client.direccion_id = direccion_id_data
+            client.telefono_id = telefono_id_data
+            
+            # Editar el cliente principal
+            response = self.crud.edit_client(client)
+            
+            return response
+        except Exception as e:
+            print(f"Error editando cliente {id_paciente}: {e}")
+            raise e
+
+
 
     def handler_get_selects(self):
         try:
@@ -65,13 +90,6 @@ class Handlerclient():
             return response
         except Exception as e :
             print("Error get ocupacion: ", e)
-    
-    def handler_get_iso(self, id_pais):
-        try:
-            response  =self.crud.get_pais_iso(id_pais)
-            return response
-        except Exception as e :
-            print("Error get iso: ", e)
 
     def handler_get_client (self):
         try:

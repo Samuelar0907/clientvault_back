@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Date, ForeignKey, Integer, String
+from sqlalchemy import Column, Date, ForeignKey, Integer, String,LargeBinary
+import uuid
 from sqlalchemy.orm import relationship
 from .database import Base
 import os
@@ -125,10 +126,10 @@ class Telefonos(Base):
 
 class Paciente(Base):
     __tablename__ = TABLE_PACIENTE
-
-    id_paciente = Column(String(25), primary_key=True, index=True)
+    id_paciente = Column(Integer, primary_key=True, index=True,autoincrement=True)
+    uid = Column(LargeBinary(25), nullable=False, default=lambda: uuid.uuid4().bytes)  
     pnombre = Column(String(50), nullable=False)
-    snombre = Column(String(100), nullable=True)
+    snombre = Column(String(50), nullable=True)
     appaterno = Column(String(100), nullable=False)
     apmaterno = Column(String(100), nullable= True)
     pais_id = Column(Integer, ForeignKey(f"{TABLE_PAIS}.id_pais"), nullable=False)

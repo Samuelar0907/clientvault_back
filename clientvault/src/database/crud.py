@@ -1,3 +1,4 @@
+import uuid
 from .database import SessionLocal
 from sqlalchemy.orm import  joinedload
 from ..models.client import Client
@@ -48,7 +49,9 @@ class ClientService:
     def add_client(self, client: Client) -> int:
         try:
             print(client.__dict__)
-            paciente = Paciente(**vars(client))
+            paciente = Paciente(
+                **vars(client),
+                uid=str(uuid.uuid4()))
             self.db.add(paciente)
             self.db.commit()
             self.db.refresh(paciente)
@@ -58,8 +61,89 @@ class ClientService:
             raise e  
         finally:
             self.db.close()
+    #otros
+    def edit_direccion(self, direc: Direcciones, id: int):
+        try:
+            if id is None:
+                raise ValueError("El valor de id_direccion no puede ser None")
 
-### gets ###
+            direccion = self.db.query(Direccion).filter_by(id_direccion=id).first()
+            if direccion is None:
+                raise ValueError(f"No se encontro la direccion con el id {id}")
+
+            direccion_data_dict = vars(direc)
+
+            for key, value in direccion_data_dict.items():
+                if key == 'id_direccion':
+                    continue
+                setattr(direccion, key, value)
+
+            self.db.commit()
+            self.db.refresh(direccion)
+            return direccion.id_direccion
+        except Exception as e:
+            self.db.rollback()
+            raise e
+        finally:
+            self.db.close()
+
+    def edit_fono(self, fonos: Telefonos, id: int):
+        try:
+            if id is None:
+                raise ValueError("El valor de id_telefonos no puede ser None")
+
+            # Buscar el teléfono existente
+            telefono = self.db.query(Telefonos).filter_by(id_telefonos=id).first()
+            if telefono is None:
+                raise ValueError(f"No se encontro el telefono con el id {id}")
+
+            telefono_data_dict = vars(fonos)
+
+            for key, value in telefono_data_dict.items():
+                if key == 'id_telefonos':
+                    continue
+                setattr(telefono, key, value)
+
+            self.db.commit()
+            self.db.refresh(telefono)
+            return telefono.id_telefonos
+        except Exception as e:
+            self.db.rollback()
+            raise e
+        finally:
+            self.db.close()
+
+    def edit_client(self, client: Client) -> str:
+        try:
+            paciente = self.db.query(Paciente).filter_by(id_paciente=client.id_paciente).first()
+
+            if paciente is None:
+                raise ValueError(f"No se encontró el Paciente con ID {client.id_paciente}")
+
+            current_telefono_id = paciente.telefono_id
+            current_direccion_id = paciente.direccion_id
+            current_uid = paciente.uid  
+            client_data_dict = vars(client)
+
+            for key, value in client_data_dict.items():
+                if key == "uid" and value is None: 
+                    continue
+                setattr(paciente, key, value)
+
+            paciente.telefono_id = client.telefono_id if client.telefono_id is not None else current_telefono_id
+            paciente.direccion_id = client.direccion_id if client.direccion_id is not None else current_direccion_id
+            paciente.uid = client.uid if client.uid is not None else current_uid  
+
+            self.db.commit()
+            self.db.refresh(paciente)
+            return "actualizado exitosamente"
+        except Exception as e:
+            self.db.rollback()
+            raise e
+        finally:
+            self.db.close()
+
+    ### gets ###
     def get_pais(self):
         try:
             response = self.db.query(Pais).order_by(Pais.nombre).all()
@@ -136,7 +220,6 @@ class ClientService:
             paciente = self.db.query(Paciente).filter(Paciente.num_identificacion == num_identificacion).first()
             
             if paciente is None:
-                print
                 return None
             else:
                 return True
@@ -171,7 +254,7 @@ class ClientService:
     def get_pais_iso(self, id_pais):
         try:
             response = self.db.query(Pais).filter(Pais.id_pais == id_pais).one()
-            return response.iso
+            return response.isonum
         except Exception as e:
             self.db.rollback()  
             raise e  
@@ -192,6 +275,8 @@ class ClientService:
                     joinedload(Paciente.sucursal),
                 ).all()
             )
+            for client in client_search:
+                client.uid = str(uuid.UUID(bytes=client.uid))
 
             return client_search
         except Exception as e:
