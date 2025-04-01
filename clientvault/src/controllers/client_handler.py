@@ -16,19 +16,18 @@ class Handlerclient():
             else:
                 direccion_id_data = self.crud.add_direccion(direccion)
                 telefono_id_data = self.crud.add_tel(fono)
-                
-                if client.identificacion_id == 2 or client.identificacion_id == 3: 
-                    isonum = self.crud.get_pais_iso(client.pais_id)
-                    id_pacient_iso = client.id_paciente+ str(isonum)
-                    client.id_paciente = id_pacient_iso
-                
+                # if client.identificacion_id == 2 or client.identificacion_id == 3: 
+                #     isonum = self.crud.get_pais_iso(client.pais_id)
+                #     id_pacient_iso = client.id_paciente+ str(isonum)
+                #     client.id_paciente = id_pacient_iso
+                print("\nagregar paciente\n\n")
                 client.direccion_id = direccion_id_data
                 client.telefono_id = telefono_id_data
-            
                 response = self.crud.add_client(client)
                 return response
         except Exception as e :
             print("Error adding client: ", e)
+
     def edit_handler_client(self, client: Client, direccion: Direcciones, fono: Telefono, id_paciente: int) -> str:
         try:
             # Editar dirección usando el ID del paciente
@@ -93,7 +92,23 @@ class Handlerclient():
 
     def handler_get_client (self):
         try:
-            search = self.crud.get_clients ()
+            search = self.crud.get_clients()
+            patient_list = self.__format(search)
+            return patient_list
+        except Exception as e:
+            print("Error when i try to get all client: ", str(e))
+  
+    def handler_get_client_search (self, buscar: str):
+        try:
+            search = self.crud.get_clients_search(buscar)
+            print(search)
+            patient_list = self.__format(search)
+            return patient_list
+        except Exception as e:
+            print("Error when searching for patients: ", str(e))
+  
+    def __format(self, search: list):
+        try:
             patient_list = []
             for patient in search :
                 patient_data=patient.__dict__.copy()
@@ -112,11 +127,9 @@ class Handlerclient():
                 for key in remove:
                     patient_data.pop(key, None)
                 patient_list.append(patient_data)
-                
             return patient_list
         except Exception as e:
             print("Error when i try to get all client: ", str(e))
-            
 
 
 from ..database.crud import AuthService

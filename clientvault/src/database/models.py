@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, ForeignKey, Integer, String,LargeBinary
+from sqlalchemy import CHAR, Column, Date, ForeignKey, Integer, String
 import uuid
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -28,8 +28,8 @@ class Region(Base):
 class User(Base):
     __tablename__ = "users"
     id_user = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String, index=True)
-    password = Column(String)
+    email = Column(String(100), index=True)
+    password = Column(String(100))
 
 
 class Comuna(Base):
@@ -127,7 +127,7 @@ class Telefonos(Base):
 class Paciente(Base):
     __tablename__ = TABLE_PACIENTE
     id_paciente = Column(Integer, primary_key=True, index=True,autoincrement=True)
-    uid = Column(LargeBinary(25), nullable=False, default=lambda: uuid.uuid4().bytes)  
+    uid = Column(CHAR(36), nullable=False, default=lambda: str(uuid.uuid4()))
     pnombre = Column(String(50), nullable=False)
     snombre = Column(String(50), nullable=True)
     appaterno = Column(String(100), nullable=False)

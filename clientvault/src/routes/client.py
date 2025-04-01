@@ -45,7 +45,6 @@ def create_test(
                  mail_sec: str= None,
                  tel_fijo: str= None,
                  familiar: str= None
-
                  ):
     
     try:
@@ -178,6 +177,14 @@ def get_region(id_sector: int):
 def get_patient():
     try:
         response = handler.handler_get_client()
+        return response
+    except Exception as e:
+      return f"Ocurrió un error inesperado: {str(e)}"
+
+@router.get("/SearchClient/{buscar}")
+def get_patient(buscar):
+    try:
+        response = handler.handler_get_client_search(buscar)
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"

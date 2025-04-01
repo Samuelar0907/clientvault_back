@@ -1,4 +1,3 @@
-import uuid
 from .database import SessionLocal
 from sqlalchemy.orm import  joinedload
 from ..models.client import Client
@@ -14,6 +13,8 @@ User
 from ..models.direccion import Direcciones
 from ..models.fono import Telefono
 
+from sqlalchemy import or_
+from sqlalchemy.exc import DatabaseError
 
 class ClientService:
     def __init__(self):
@@ -48,10 +49,8 @@ class ClientService:
 
     def add_client(self, client: Client) -> int:
         try:
-            print(client.__dict__)
             paciente = Paciente(
-                **vars(client),
-                uid=str(uuid.uuid4()))
+                **vars(client),)
             self.db.add(paciente)
             self.db.commit()
             self.db.refresh(paciente)
@@ -261,7 +260,7 @@ class ClientService:
         finally:
             self.db.close()
 
-    def get_clients (self):
+    def get_clients(self):
         try:
             client_search = (
                 self.db.query(Paciente).options(
@@ -275,13 +274,57 @@ class ClientService:
                     joinedload(Paciente.sucursal),
                 ).all()
             )
-            for client in client_search:
-                client.uid = str(uuid.UUID(bytes=client.uid))
-
             return client_search
         except Exception as e:
             return f"error{str(e)}"
         
+    def get_clients_search(self, buscar: str):
+        try:
+            conditions = []
+            try:
+                id_paciente = int(buscar)
+                conditions.append(Paciente.id_paciente == id_paciente)
+            except ValueError:
+                pass
+
+            buscar_lower = f"{buscar.lower()}%"
+            conditions.extend([
+                Paciente.pnombre.ilike(buscar_lower),
+                Paciente.snombre.ilike(buscar_lower),
+                Paciente.appaterno.ilike(buscar_lower),
+                Paciente.apmaterno.ilike(buscar_lower),
+                Paciente.mail_princ.ilike(buscar_lower),
+                Paciente.num_identificacion.ilike(buscar_lower),
+            ])
+            conditions.append(
+                self.db.query(Identificacion)
+                .filter(Identificacion.id_identificacion == Paciente.identificacion_id)
+                .filter(Identificacion.n_documeto.ilike(buscar_lower))
+                .exists()
+            )
+            client_search = (
+                self.db.query(Paciente)
+                .filter(or_(*conditions))
+                .options(
+                    joinedload(Paciente.pais),
+                    joinedload(Paciente.identificacion),
+                    joinedload(Paciente.nivel_academico),
+                    joinedload(Paciente.prevision),
+                    joinedload(Paciente.ocupacion),
+                    joinedload(Paciente.telefono),
+                    joinedload(Paciente.direccion),
+                    joinedload(Paciente.sucursal),
+                )
+                .offset(0)
+                .limit(100)
+                .all()
+            )
+            return client_search
+        except DatabaseError as e:
+            raise Exception(f"Error de base de datos al buscar clientes: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Error inesperado al buscar clientes: {str(e)}")
+            
 
 
 
