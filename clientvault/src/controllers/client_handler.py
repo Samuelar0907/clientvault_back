@@ -1,3 +1,4 @@
+from src.models.BuscarCampos import BuscarCampos
 from ..database.crud import ClientService
 from ..models.client import Client
 from ..models.fono import Telefono
@@ -10,21 +11,21 @@ class Handlerclient():
     crud = ClientService()
     def add_handler_client(self,client : Client, direccion: Direcciones, fono: Telefono )->str:
         try:
-            if self.crud.get_num_identificacion(client.num_identificacion):
-                print("ya exsiste el documento\n")
-                return "el paciente ya esta registrado, verifique que el rut, dni o pasaporte sea correcto"
-            else:
-                direccion_id_data = self.crud.add_direccion(direccion)
-                telefono_id_data = self.crud.add_tel(fono)
-                # if client.identificacion_id == 2 or client.identificacion_id == 3: 
-                #     isonum = self.crud.get_pais_iso(client.pais_id)
-                #     id_pacient_iso = client.id_paciente+ str(isonum)
-                #     client.id_paciente = id_pacient_iso
-                print("\nagregar paciente\n\n")
-                client.direccion_id = direccion_id_data
-                client.telefono_id = telefono_id_data
-                response = self.crud.add_client(client)
-                return response
+        # if self.crud.get_num_identificacion(client.num_identificacion):
+        #     print("ya exsiste el documento\n")
+        #     return "el paciente ya esta registrado, verifique que el rut, dni o pasaporte sea correcto"
+        # else:
+            direccion_id_data = self.crud.add_direccion(direccion)
+            telefono_id_data = self.crud.add_tel(fono)
+            # if client.identificacion_id == 2 or client.identificacion_id == 3: 
+            #     isonum = self.crud.get_pais_iso(client.pais_id)
+            #     id_pacient_iso = client.id_paciente+ str(isonum)
+            #     client.id_paciente = id_pacient_iso
+            print("\nagregar paciente\n\n")
+            client.direccion_id = direccion_id_data
+            client.telefono_id = telefono_id_data
+            response = self.crud.add_client(client)
+            return response
         except Exception as e :
             print("Error adding client: ", e)
 
@@ -98,7 +99,7 @@ class Handlerclient():
         except Exception as e:
             print("Error when i try to get all client: ", str(e))
   
-    def handler_get_client_search (self, buscar: str):
+    def handler_get_client_search (self, buscar: BuscarCampos):
         try:
             search = self.crud.get_clients_search(buscar)
             print(search)

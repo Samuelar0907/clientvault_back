@@ -1,3 +1,4 @@
+from src.models.BuscarCampos import BuscarCampos
 from .database import SessionLocal
 from sqlalchemy.orm import  joinedload
 from ..models.client import Client
@@ -13,7 +14,7 @@ User
 from ..models.direccion import Direcciones
 from ..models.fono import Telefono
 
-from sqlalchemy import or_
+from sqlalchemy import and_
 from sqlalchemy.exc import DatabaseError
 
 class ClientService:
@@ -155,7 +156,7 @@ class ClientService:
 
     def get_tipo_documento(self):
         try:
-            response = self.db.query(Identificacion).order_by(Identificacion.n_documeto).all()
+            response = self.db.query(Identificacion).order_by(Identificacion.id_identificacion).all()
             return response
         except Exception as e:
             self.db.rollback()  
@@ -278,33 +279,20 @@ class ClientService:
         except Exception as e:
             return f"error{str(e)}"
         
-    def get_clients_search(self, buscar: str):
+    def get_clients_search(self, buscar: BuscarCampos):
         try:
             conditions = []
-            try:
-                id_paciente = int(buscar)
-                conditions.append(Paciente.id_paciente == id_paciente)
-            except ValueError:
-                pass
-
-            buscar_lower = f"{buscar.lower()}%"
-            conditions.extend([
-                Paciente.pnombre.ilike(buscar_lower),
-                Paciente.snombre.ilike(buscar_lower),
-                Paciente.appaterno.ilike(buscar_lower),
-                Paciente.apmaterno.ilike(buscar_lower),
-                Paciente.mail_princ.ilike(buscar_lower),
-                Paciente.num_identificacion.ilike(buscar_lower),
-            ])
-            conditions.append(
-                self.db.query(Identificacion)
-                .filter(Identificacion.id_identificacion == Paciente.identificacion_id)
-                .filter(Identificacion.n_documeto.ilike(buscar_lower))
-                .exists()
-            )
+            buscar_lower = {}
+            for campo, valor in buscar.dict().items():
+                if valor:
+                    if type(valor) == str:
+                        buscar_lower[campo] = f"{valor.lower()}%"
+                    else:
+                        buscar_lower[campo] = valor
+                    conditions.append(getattr(Paciente, campo).ilike(buscar_lower[campo]))
             client_search = (
                 self.db.query(Paciente)
-                .filter(or_(*conditions))
+                .filter(and_(*conditions))
                 .options(
                     joinedload(Paciente.pais),
                     joinedload(Paciente.identificacion),
@@ -324,7 +312,6 @@ class ClientService:
             raise Exception(f"Error de base de datos al buscar clientes: {str(e)}")
         except Exception as e:
             raise Exception(f"Error inesperado al buscar clientes: {str(e)}")
-            
 
 
 

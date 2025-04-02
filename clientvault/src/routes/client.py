@@ -1,5 +1,7 @@
 from datetime import date
 
+from src.models.BuscarCampos import BuscarCampos
+
 from ..database.database import very
 
 from ..models.client import Client
@@ -148,6 +150,34 @@ def edit_client_r(
     
     except Exception as e:
         return {"status": "error", "message": f"Ocurrió un error inesperado: {str(e)}"}
+
+@router.post("/SearchClient/")
+def get_patient(
+    id_paciente: int = None,
+    pnombre: str = None,
+    snombre: str = None,
+    appaterno: str = None,
+    apmaterno: str = None,
+    mail_princ: str = None,
+    identificacion_id: int = None,
+    num_identificacion: str = None,
+    ):
+    try:
+        buscar = BuscarCampos(
+            id_paciente = id_paciente ,
+            pnombre = pnombre,
+            snombre = snombre,
+            appaterno = appaterno,
+            apmaterno = apmaterno,
+            mail_princ = mail_princ,
+            identificacion_id = identificacion_id,
+            num_identificacion = num_identificacion
+        )
+        response = handler.handler_get_client_search(buscar)
+        return response
+    except Exception as e:
+      return f"Ocurrió un error inesperado: {str(e)}"
+    
 ### gets ###
 @router.get("/get/selects")
 def json_selects():
@@ -180,14 +210,6 @@ def get_patient():
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"
-
-@router.get("/SearchClient/{buscar}")
-def get_patient(buscar):
-    try:
-        response = handler.handler_get_client_search(buscar)
-        return response
-    except Exception as e:
-      return f"Ocurrió un error inesperado: {str(e)}"
     
 # GET PRA VERIFICAR CONECCION A DB
 
@@ -198,8 +220,6 @@ def get_very_db():
         return response
     except Exception as e:
       return f"Ocurrió un error inesperado: {str(e)}"
-
-
 
 
 from pydantic import BaseModel
