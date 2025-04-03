@@ -300,7 +300,7 @@ class ClientService:
                     joinedload(Paciente.prevision),
                     joinedload(Paciente.ocupacion),
                     joinedload(Paciente.telefono),
-                    joinedload(Paciente.direccion),
+                    joinedload(Paciente.direccion).joinedload(Direccion.comuna),
                     joinedload(Paciente.sucursal),
                 )
                 .offset(0)

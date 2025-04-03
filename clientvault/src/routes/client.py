@@ -138,14 +138,17 @@ def edit_client_r(
             tel_fijo=tel_fijo,
             familiar=familiar
         )
-        
+        # Print para ver los datos que se están pasando
+        print(f"Datos del paciente: id_paciente={id_paciente}, pnombre={pnombre}, snombre={snombre}")
+        print(f"Datos de dirección: direccion={direccion}, descripcion={descripcion}, comuna_id={comuna_id}")
+        print(f"Datos de teléfono: celular={celular}, tel_fijo={tel_fijo}, familiar={familiar}")
         response = handler.edit_handler_client(
             client=paciente,
             direccion=direccion_obj,
             fono=telefono_obj,
             id_paciente=id_paciente
         )
-        
+        print(f"Respuesta de edit_handler_client: {response}")
         return response
     
     except Exception as e:

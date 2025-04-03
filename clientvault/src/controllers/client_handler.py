@@ -31,24 +31,33 @@ class Handlerclient():
 
     def edit_handler_client(self, client: Client, direccion: Direcciones, fono: Telefono, id_paciente: int) -> str:
         try:
+            # Print para ver los datos recibidos
+            print(f"Entrando a edit_handler_client con id_paciente={id_paciente}")
+            print(f"Client data: id_paciente={client.id_paciente}, pnombre={client.pnombre}, snombre={client.snombre}")
+            print(f"Dirección data: direccion={direccion.direccion}, comuna_id={direccion.comuna_id}")
+            print(f"Teléfono data: celular={fono.celular}, tel_fijo={fono.tel_fijo}")
+
             # Editar dirección usando el ID del paciente
             direccion_id_data = self.crud.edit_direccion(direccion, id_paciente)
+            print(f"Resultado de edit_direccion: direccion_id_data={direccion_id_data}")
             
             # Editar teléfono usando el ID del paciente
             telefono_id_data = self.crud.edit_fono(fono, id_paciente)
+            print(f"Resultado de edit_fono: telefono_id_data={telefono_id_data}")
             
             # Actualizar las referencias en el cliente
             client.direccion_id = direccion_id_data
             client.telefono_id = telefono_id_data
+
+            print(f"Client actualizado con direccion_id={client.direccion_id}, telefono_id={client.telefono_id}")
             
-            # Editar el cliente principal
             response = self.crud.edit_client(client)
+            print(f"Resultado de edit_client: {response}")
             
             return response
         except Exception as e:
-            print(f"Error editando cliente {id_paciente}: {e}")
+            print(f"Error en edit_handler_client para id_paciente={id_paciente}: {str(e)}")
             raise e
-
 
 
     def handler_get_selects(self):
@@ -118,12 +127,22 @@ class Handlerclient():
                     'identificacion_id' : patient.identificacion.n_documeto if patient.identificacion else None,
                     'sucursal_id' : patient.sucursal.sucursal if patient.sucursal else None,
                     'academico_id' : patient.nivel_academico.n_academiconv if patient.nivel_academico else None,
-                    'pais_id' : patient.pais.nombre if patient.pais else None
+                    'pais_id' : patient.pais.nombre if patient.pais else None,
+                    'ocupacion_id': patient.ocupacion.tipo_ocupacion if patient.ocupacion else None,
+                    'direccion' :patient.direccion.direccion if patient.direccion else None,
+                    'descripcion': patient.direccion.descripcion if patient.direccion else None,
+                    'comuna_id': patient.direccion.comuna if patient.direccion and patient.direccion.comuna else None,
+                    'comuna': patient.direccion.comuna.n_comuna if patient.direccion and patient.direccion.comuna else None,
+                    'celular': patient.telefono.celular if patient.telefono and patient.telefono else None,
+                    'tel_fijo': patient.telefono.tel_fijo if patient.telefono and patient.telefono else None,
+                    'familiar': patient.telefono.familiar if patient.telefono and patient.telefono else None
+
+
                 }
                 patient_data.update(relations)
                 remove = [
                     'prevision',   'identificacion',
-                    'sucursal', 'nivel_academico', 'pais',
+                    'sucursal', 'nivel_academico', 'pais','ocupacion',
                 ]
                 for key in remove:
                     patient_data.pop(key, None)
